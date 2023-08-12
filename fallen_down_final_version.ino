@@ -1,3 +1,7 @@
+// PROGMEM - storing constant, big variables in flash instead of RAM (global/functions, not in loops), slower than SRAM
+// EEPROM - storing constant (slow, configs etc.)
+// SRAM - fast acces to data, small capacity
+
 // selected pins
 
 #define BASS D0
@@ -41,12 +45,13 @@
 #define NOTE_CS6 1109
 
 // used for speeding up / slowing melody
+// static means variable exists till the end of the program
 
-const float songSpeed = 1.5;
+const static float songSpeed = 1.5;
 
 // jumping through main melody notes
 
-const int melodyNotes[] = {
+const static int melodyNotes[] PROGMEM = {
 
   NOTE_FS5, NOTE_C5S, NOTE_FS5, NOTE_C5S, NOTE_FS5, NOTE_C5S,
   NOTE_FS5, NOTE_C5S, NOTE_FS5, NOTE_C5S, NOTE_FS5, NOTE_C5S,
@@ -105,7 +110,7 @@ const int melodyNotes[] = {
 // to prolong, for example, the sound of bass notes, we simply place them behind the melodic notes a few times
 // and we do not need to create the new duration table for them
 
-const int melodyDurations[] = {
+const static int melodyDurations[] PROGMEM = {
 
   545, 545, 545, 545, 545, 545,
   545, 545, 545, 545, 545, 545,
@@ -163,7 +168,7 @@ const int melodyDurations[] = {
 // 0 - means no notes are playing (no chord)
 // other option - note playing in the same time as the note in a main melody
 
-const int chords[] = {
+const static int chords[] PROGMEM = {
 
   0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0,
@@ -221,7 +226,7 @@ const int chords[] = {
 // bass notes, several playing at the same time as the notes from the main melody
 // so we dont need to create new duration table for them
 
-const int bass[] = {
+const static int bass[] PROGMEM = {
 
   NOTE_D3, NOTE_D3, NOTE_D3, NOTE_D3, NOTE_D3, NOTE_D3,
   NOTE_D3, NOTE_D3, NOTE_D3, NOTE_D3, NOTE_D3, NOTE_D3,
@@ -286,14 +291,14 @@ void setup() {
 
   // calculating length of the notes' table
 
-  const int totalNotes = sizeof(melodyNotes) / sizeof(int);
+  unsigned const static int totalNotes PROGMEM = sizeof(melodyNotes) / sizeof(int);
 
   // jumping throught notes
 
   for (int i = 0; i < totalNotes; i++)
   {
     const int currentNote = melodyNotes[i];
-    float melodyDelay = melodyDurations[i] / songSpeed;
+    const float melodyDelay = melodyDurations[i] / songSpeed;
 
     // play tone if currentNote is not 0 frequency, otherwise pause (noTone)
     if (currentNote != 0)
@@ -320,9 +325,10 @@ void setup() {
     // delay is used to wait for tone to finish playing before moving to next loop
     delay(melodyDelay);
 
-  } 
+  }
 
 }
+
 
 void loop() {
 
