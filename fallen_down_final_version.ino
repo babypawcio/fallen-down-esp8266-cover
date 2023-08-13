@@ -1,5 +1,5 @@
 // PROGMEM - storing constant, big variables in flash instead of RAM (global/functions, not in loops), slower than SRAM
-// EEPROM - storing constant (slow, configs etc.)
+// EEPROM - storing constant data (slow, configs etc.)
 // SRAM - fast acces to data, small capacity
 
 // selected pins
@@ -297,8 +297,8 @@ void setup() {
 
   for (int i = 0; i < totalNotes; i++)
   {
-    const int currentNote = melodyNotes[i];
-    const float melodyDelay = melodyDurations[i] / songSpeed;
+    const int currentNote = pgm_read_word(&melodyNotes[i]);
+    const float melodyDelay = pgm_read_word(&melodyDurations[i]) / songSpeed;
 
     // play tone if currentNote is not 0 frequency, otherwise pause (noTone)
     if (currentNote != 0)
@@ -307,9 +307,9 @@ void setup() {
       // tone(buzzer, note/frequency, duration)  -- > duration is optional, works without it too,
       // but at the end, the last note is still playing 
 
-      tone(MELODY1, melodyNotes[i], melodyDelay);
-      tone(MELODY2, chords[i], melodyDelay);
-      tone(BASS, bass[i], melodyDelay);
+      tone(MELODY1, pgm_read_word(&melodyNotes[i]), melodyDelay);
+      tone(MELODY2, pgm_read_word(&chords[i]), melodyDelay);
+      tone(BASS, pgm_read_word(&bass[i]), melodyDelay);
     }
 
     else
